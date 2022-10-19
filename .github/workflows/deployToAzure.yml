@@ -56,6 +56,6 @@ jobs:
           template: main.bicep
           # Supply deployment parameter values.
           parameters: storageAccountPrefix=ghaction
-          deploymentName: "gh ${{github.run_id}}"
+          deploymentName: "gh${{github.run_id}}"
           
           
