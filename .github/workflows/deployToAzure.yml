@@ -9,6 +9,10 @@ on:
     branches: [ "main" ]
   # Allows one to run the workflow manually from Actions Tab
   workflow_dispatch:
+  
+env: 
+  resourceGroupName: GitHubExampleRG
+  
 # The actual process steps
 #  Note using ubuntu saves on resources, so this will run on linux
 #  
@@ -37,7 +41,7 @@ jobs:
         uses: Azure/powershell@v1
         with:
           # Specify the Az PowerShell script here.
-          inlineScript: New-AzResourceGroup -Name GitHubExampleRG -location EastUS -Force
+          inlineScript: New-AzResourceGroup -Name ${{ env.resourceGroupName }} -location EastUS -Force
           # Azure PS version to be used to execute the script, example: 1.8.0, 2.8.0, 3.4.0. To use the latest version, specify "latest".
           azPSVersion: latest
        # Deploy to RG    
@@ -47,7 +51,7 @@ jobs:
           # Provide the scope of the deployment. Valid values are: 'resourcegroup', 'managementgroup', 'subscription'
           scope: resourcegroup
           # Provide the name of a resource group, only required for resource Group deployments.
-          resourceGroupName: GitHubExampleRG
+          resourceGroupName: ${{ env.resourceGroupName }}
           # Specify the path or URL to the Azure Resource Manager template.
           template: main.bicep
           # Supply deployment parameter values.
