@@ -37,7 +37,7 @@ jobs:
           # Set this value to true to enable Azure PowerShell Login in addition to Az CLI login
           enable-AzPSSession: true
       # Create the Resource group using Azure cli in Powershell
-      - name: Azure PowerShell Action
+      - name: Create the Resouce Group
         uses: Azure/powershell@v1
         with:
           # Specify the Az PowerShell script here.
