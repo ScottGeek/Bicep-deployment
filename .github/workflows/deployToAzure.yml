@@ -1,0 +1,55 @@
+# A basic workflow to deploy using bicep file
+name:  DeployToAzure
+# Control when the workflow will run
+on:
+  # Triggers the workflow on push or pull events in the "main" branch
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  # Allows one to run the workflow manually from Actions Tab
+  workflow_dispatch:
+# The actual process steps
+#  Note using ubuntu saves on resources, so this will run on linux
+#  
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    # The steps to deploy
+    #  Checkout the code in the repo
+    #  Login to Azure (using secrets)
+    #  Create it's own Resource group in Azure
+    #
+    #
+    steps:
+      - uses: actions/checkout@v3
+      # Login to Azure using the Secrets that were setup in the Git repo
+
+      - name: Azure Login
+        uses: Azure/login@v1.4.6
+        with:
+          # Paste output of `az ad sp create-for-rbac` as value of secret variable: AZURE_CREDENTIALS
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          # Set this value to true to enable Azure PowerShell Login in addition to Az CLI login
+          enable-AzPSSession: true
+      # Create the Resource group using Azure cli in Powershell
+      - name: Azure PowerShell Action
+        uses: Azure/powershell@v1
+        with:
+          # Specify the Az PowerShell script here.
+          inlineScript: New-AzResourceGroup -Name GitHubExampleRG -location EastUS -Force
+          # Azure PS version to be used to execute the script, example: 1.8.0, 2.8.0, 3.4.0. To use the latest version, specify "latest".
+          azPSVersion: latest
+       # Deploy to RG    
+      - name: Deploy Azure Resource Manager (ARM) Template
+        uses: Azure/arm-deploy@v1.0.8
+        with:
+          # Provide the scope of the deployment. Valid values are: 'resourcegroup', 'managementgroup', 'subscription'
+          scope: resourcegroup
+          # Provide the name of a resource group, only required for resource Group deployments.
+          resourceGroupName: GitHubExampleRG
+          # Specify the path or URL to the Azure Resource Manager template.
+          template: main.bicep
+          
+          
+          
