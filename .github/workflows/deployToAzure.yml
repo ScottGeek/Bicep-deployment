@@ -36,6 +36,14 @@ jobs:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
           # Set this value to true to enable Azure PowerShell Login in addition to Az CLI login
           enable-AzPSSession: true
+          
+      - name: Build bicep file into ARM template
+        uses: Azure/cli@v1.0.6
+        with:
+          # Build the main bicep file into main.json Arm template
+          inlineScript: az bicep build --file main.bicep --out ./main.json
+          # Azure CLI version to be used to execute the script. If not provided, latest version is used
+                
       # Create the Resource group using Azure cli in Powershell
       - name: Create the Resouce Group using Powershell
         uses: Azure/powershell@v1
@@ -45,7 +53,7 @@ jobs:
           # Azure PS version to be used to execute the script, example: 1.8.0, 2.8.0, 3.4.0. To use the latest version, specify "latest".
           azPSVersion: latest
        # Deploy to RG    
-      - name: Deploy Azure (ARM) Template Bicep
+      - name: Deploy Azure (ARM) Template build from bicep file
         uses: Azure/arm-deploy@v1.0.8
         with:
           # Provide the scope of the deployment. Valid values are: 'resourcegroup', 'managementgroup', 'subscription'
@@ -53,7 +61,7 @@ jobs:
           # Provide the name of a resource group, only required for resource Group deployments.
           resourceGroupName: ${{ env.resourceGroupName }}
           # Specify the path or URL to the Azure Resource Manager template.
-          template: main.bicep
+          template: main.json
           # Supply deployment parameter values.
           parameters: storageAccountPrefix=ghaction
           deploymentName: "gh${{github.run_id}}"
