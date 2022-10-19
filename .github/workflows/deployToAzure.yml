@@ -51,7 +51,17 @@ jobs:
           inlineScript: New-AzResourceGroup -Name ${{ env.resourceGroupName }} -location EastUS -Force
           # Azure PS version to be used to execute the script, example: 1.8.0, 2.8.0, 3.4.0. To use the latest version, specify "latest".
           azPSVersion: latest
-       # Deploy to RG    
+      
+      - name: Perform What-If test on RG
+        uses: Azure/powershell@v1
+        with:
+          # Specify the Az PowerShell script here.
+          inlineScript: New-AzResourceGroupDeployment -ResourceGroupName ${{ env.resourceGroupName }} -TemplateFile main.bicep -WhatIf 
+          # Azure PS version to be used to execute the script, example: 1.8.0, 2.8.0, 3.4.0. To use the latest version, specify "latest".
+          azPSVersion: latest
+
+            
+      # Deploy to RG    
       - name: Deploy Azure (ARM) Template build from bicep file
         uses: Azure/arm-deploy@v1.0.8
         with:
